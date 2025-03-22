@@ -24,16 +24,23 @@ const RegisterForm = () => {
     const validation = registerSchema.safeParse(user);
     if (validation.error)
       return setClientError(validation.error.errors[0].message);
-
+    setLoading(true);
     registerAction(user).then((res) => {
-      if (res?.error) setServerError(res.error);
-      if (res?.success) setServerSuccess(res.success);
+      if (res.success) {
+        setServerSuccess(res.message);
+        setServerError("");
+        setClientError("");
+        setServerError("");
+        setName("");
+        setEmail("");
+        setPassword("");
+      }
+      if (!res.success) {
+        setServerSuccess("");
+        setServerError(res.message);
+      }
     });
-
-    setName("");
-    setEmail("");
-    setPassword("");
-    setClientError("");
+    setLoading(false);
   };
   return (
     <form onSubmit={formSubmitHandler}>
@@ -47,6 +54,7 @@ const RegisterForm = () => {
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          disabled={loading}
         />
       </div>
       <div className="flex flex-col mb-3">
@@ -59,6 +67,7 @@ const RegisterForm = () => {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
         />
       </div>
       <div className="flex flex-col mb-3">
@@ -71,6 +80,7 @@ const RegisterForm = () => {
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
         />
       </div>
       {(clientError || serverError) && (
