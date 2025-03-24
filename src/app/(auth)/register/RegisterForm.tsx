@@ -39,8 +39,8 @@ const RegisterForm = () => {
         setServerSuccess("");
         setServerError(res.message);
       }
+      setLoading(false);
     });
-    setLoading(false);
   };
   return (
     <form onSubmit={formSubmitHandler}>

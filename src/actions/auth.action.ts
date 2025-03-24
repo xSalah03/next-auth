@@ -4,18 +4,35 @@ import { prisma } from "@/utils/prisma";
 import { loginSchema, registerSchema } from "@/utils/validationSchemas";
 import { z } from "zod";
 import * as bcrypt from "bcryptjs";
+import { signIn, signOut } from "@/auth";
+import { AuthError } from "next-auth";
 
 type loginDto = z.infer<typeof loginSchema>;
 type registerDto = z.infer<typeof registerSchema>;
 
+// Login
 export const loginAction = async (data: loginDto) => {
   const validation = loginSchema.safeParse(data);
-  if (validation.error) return { error: "Invalid credentials" };
-
-  console.log(data);
-  return { success: "Login Successful" };
+  if (validation.error)
+    return { success: false, message: "Invalid credentials" };
+  const { email, password } = validation.data;
+  try {
+    await signIn("credentials", { email, password, redirectTo: "/profile" });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return { success: false, message: "Invalid email or password" };
+        default:
+          return { success: false, message: "Something went wrong" };
+      }
+    }
+    throw error;
+  }
+  return { success: true, message: "Login Successful" };
 };
 
+// Register
 export const registerAction = async (data: registerDto) => {
   const validation = registerSchema.safeParse(data);
   if (validation.error)
@@ -32,4 +49,9 @@ export const registerAction = async (data: registerDto) => {
     data: { name, email, password: hashedPassword },
   });
   return { success: true, message: "Register Successful" };
+};
+
+// Logout
+export const logoutAction = async () => {
+  await signOut();
 };
