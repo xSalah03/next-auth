@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { IoMdLogIn } from "react-icons/io";
 import { useState } from "react";
-import { loginSchema } from "@/utils/validationSchemas";
+import { LoginSchema } from "@/utils/validationSchemas";
 import Alert from "@/components/Alert";
 import Spinner from "@/components/Spinner";
 import { loginAction } from "@/actions/auth.action";
@@ -18,7 +18,7 @@ const LoginForm = () => {
 
   const formSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    const validation = loginSchema.safeParse({ email, password });
+    const validation = LoginSchema.safeParse({ email, password });
     if (validation.error)
       return setClientError(validation.error.errors[0].message);
 

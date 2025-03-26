@@ -1,17 +1,16 @@
 import { auth as middleware } from "@/auth";
 import { NextResponse } from "next/server";
-
-const authRoutes = ["/login", "/register"];
-const protectedRoutes = ["/profile"];
+import { authRoutes, defaultLoginRedirect, protectedRoutes } from "@/routes";
 
 export default middleware((req) => {
   const { nextUrl } = req;
   const path = nextUrl.pathname;
 
   const isUserLoggedIn: boolean = Boolean(req.auth);
-  console.log(isUserLoggedIn);
+
   if (authRoutes.includes(path) && isUserLoggedIn)
-    return NextResponse.redirect(new URL("/profile", nextUrl));
+    return NextResponse.redirect(new URL(defaultLoginRedirect, nextUrl));
+
   if (protectedRoutes.includes(path) && !isUserLoggedIn)
     return NextResponse.redirect(new URL("/login", nextUrl));
 });

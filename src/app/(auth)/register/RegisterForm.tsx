@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { BsPerson, BsPersonPlus } from "react-icons/bs";
 import { useState } from "react";
-import { registerSchema } from "@/utils/validationSchemas";
+import { RegisterSchema } from "@/utils/validationSchemas";
 import { registerAction } from "@/actions/auth.action";
 import Spinner from "@/components/Spinner";
 import Alert from "@/components/Alert";
@@ -21,7 +21,7 @@ const RegisterForm = () => {
   const formSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const user = { name, email, password };
-    const validation = registerSchema.safeParse(user);
+    const validation = RegisterSchema.safeParse(user);
     if (validation.error)
       return setClientError(validation.error.errors[0].message);
     setLoading(true);

@@ -1,23 +1,28 @@
 "use server";
 
 import { prisma } from "@/utils/prisma";
-import { loginSchema, registerSchema } from "@/utils/validationSchemas";
+import { LoginSchema, RegisterSchema } from "@/utils/validationSchemas";
 import { z } from "zod";
 import * as bcrypt from "bcryptjs";
 import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
+import { defaultLoginRedirect } from "@/routes";
 
-type loginDto = z.infer<typeof loginSchema>;
-type registerDto = z.infer<typeof registerSchema>;
+type loginDto = z.infer<typeof LoginSchema>;
+type registerDto = z.infer<typeof RegisterSchema>;
 
 // Login
 export const loginAction = async (data: loginDto) => {
-  const validation = loginSchema.safeParse(data);
-  if (validation.error)
+  const validation = LoginSchema.safeParse(data);
+  if (!validation.success)
     return { success: false, message: "Invalid credentials" };
   const { email, password } = validation.data;
   try {
-    await signIn("credentials", { email, password, redirectTo: "/profile" });
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: defaultLoginRedirect,
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -34,7 +39,7 @@ export const loginAction = async (data: loginDto) => {
 
 // Register
 export const registerAction = async (data: registerDto) => {
-  const validation = registerSchema.safeParse(data);
+  const validation = RegisterSchema.safeParse(data);
   if (validation.error)
     return { success: false, message: "Invalid credentials" };
 
