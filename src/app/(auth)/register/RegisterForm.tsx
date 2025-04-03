@@ -1,7 +1,7 @@
 "use client";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
-import { BsPerson, BsPersonPlus } from "react-icons/bs";
+import { BsPersonPlus } from "react-icons/bs";
 import { useState } from "react";
 import { RegisterSchema } from "@/utils/validationSchemas";
 import { registerAction } from "@/actions/auth.action";

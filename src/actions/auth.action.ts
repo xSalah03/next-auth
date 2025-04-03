@@ -14,9 +14,12 @@ type registerDto = z.infer<typeof RegisterSchema>;
 // Login
 export const loginAction = async (data: loginDto) => {
   const validation = LoginSchema.safeParse(data);
+
   if (!validation.success)
     return { success: false, message: "Invalid credentials" };
+
   const { email, password } = validation.data;
+
   try {
     await signIn("credentials", {
       email,
@@ -34,26 +37,37 @@ export const loginAction = async (data: loginDto) => {
     }
     throw error;
   }
+
   return { success: true, message: "Login Successful" };
 };
 
 // Register
 export const registerAction = async (data: registerDto) => {
   const validation = RegisterSchema.safeParse(data);
+
   if (validation.error)
     return { success: false, message: "Invalid credentials" };
 
   const { name, email, password } = validation.data;
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (user) return { success: false, message: "User already exists" };
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (user) return { success: false, message: "User already exists" };
 
-  await prisma.user.create({
-    data: { name, email, password: hashedPassword },
-  });
-  return { success: true, message: "Register Successful" };
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    await prisma.user.create({
+      data: { name, email, password: hashedPassword },
+    });
+    return { success: true, message: "Register Successful" };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Something went wrong, please try again",
+    };
+  }
 };
 
 // Logout
