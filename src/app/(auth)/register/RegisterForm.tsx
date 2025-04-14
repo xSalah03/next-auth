@@ -1,12 +1,11 @@
 "use client";
-import { FcGoogle } from "react-icons/fc";
-import { FaGithub } from "react-icons/fa";
 import { BsPersonPlus } from "react-icons/bs";
 import { useState } from "react";
 import { RegisterSchema } from "@/utils/validationSchemas";
 import { registerAction } from "@/actions/auth.action";
 import Spinner from "@/components/Spinner";
 import Alert from "@/components/Alert";
+import SocialProvider from "@/components/SocialProvider";
 
 const RegisterForm = () => {
   const [name, setName] = useState("");
@@ -102,20 +101,7 @@ const RegisterForm = () => {
           </>
         )}
       </button>
-      <div className="flex items-center justify-center gap-6 mt-6">
-        <div
-          className="border border-slate-200 bg-blue-100 hover:bg-blue-200 rounded px-4 py-2
-         cursor-pointer w-1/2 flex justify-center items-center"
-        >
-          <FcGoogle className="text-4xl" />
-        </div>
-        <div
-          className="border border-slate-200 bg-slate-100 hover:bg-slate-200 rounded px-4 py-2
-         cursor-pointer w-1/2 flex justify-center items-center"
-        >
-          <FaGithub className="text-4xl" />
-        </div>
-      </div>
+      <SocialProvider />
     </form>
   );
 };

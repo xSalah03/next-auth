@@ -7,6 +7,8 @@ import { LoginSchema } from "@/utils/validationSchemas";
 import Alert from "@/components/Alert";
 import Spinner from "@/components/Spinner";
 import { loginAction } from "@/actions/auth.action";
+import SocialProvider from "@/components/SocialProvider";
+import { set } from "zod";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +16,7 @@ const LoginForm = () => {
 
   const [clientError, setClientError] = useState("");
   const [serverError, setServerError] = useState("");
+  const [serverSuccess, setServerSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const formSubmitHandler = (e: React.FormEvent) => {
@@ -24,6 +27,13 @@ const LoginForm = () => {
 
     setLoading(true);
     loginAction({ email, password }).then((result) => {
+      if (result.success) {
+        setServerSuccess(result.message);
+        setEmail("");
+        setPassword("");
+        setClientError("");
+        setServerError(""); 
+      }
       if (!result.success) setServerError(result.message);
       setLoading(false);
     });
@@ -60,6 +70,7 @@ const LoginForm = () => {
       {(clientError || serverError) && (
         <Alert type="error" message={clientError || serverError} />
       )}
+      {serverSuccess && <Alert type="success" message={serverSuccess} />}
       <button
         className="disabled:bg-gray-300 flex items-center justify-center bg-slate-800  hover:bg-slate-900 mt-4 text-white cursor-pointer rounded-lg w-full py-2"
         disabled={loading}
@@ -74,20 +85,7 @@ const LoginForm = () => {
           </>
         )}
       </button>
-      <div className="flex items-center justify-center gap-6 mt-6">
-        <div
-          className="border border-slate-200 bg-blue-100 hover:bg-blue-200 rounded px-4 py-2
-         cursor-pointer w-1/2 flex justify-center items-center"
-        >
-          <FcGoogle className="text-4xl" />
-        </div>
-        <div
-          className="border border-slate-200 bg-slate-100 hover:bg-slate-200 rounded px-4 py-2
-         cursor-pointer w-1/2 flex justify-center items-center"
-        >
-          <FaGithub className="text-4xl" />
-        </div>
-      </div>
+      <SocialProvider />
     </form>
   );
 };

@@ -3,6 +3,7 @@ import { logoutAction } from "@/actions/auth.action";
 
 const ProfilePage = async () => {
   const session = await auth();
+
   return (
     <div>
       {session?.user && (
